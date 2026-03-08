@@ -1,0 +1,149 @@
+-- Con Cho Dai Ngu Hub V3 Mobile
+
+local player = game.Players.LocalPlayer
+local mouse = player:GetMouse()
+local UIS = game:GetService("UserInputService")
+local vim = game:GetService("VirtualInputManager")
+
+-- tốc độ
+local skillDelay = 0.5
+local clickDelay = 1
+
+-- instant bật sẵn
+for _,v in pairs(game:GetDescendants()) do
+    if v:IsA("ProximityPrompt") then
+        v.HoldDuration = 0
+    end
+end
+
+-- GUI
+local gui = Instance.new("ScreenGui",player.PlayerGui)
+gui.Name = "ChoDaiNguHubV3"
+
+local main = Instance.new("Frame",gui)
+main.Size = UDim2.new(0,300,0,230)
+main.Position = UDim2.new(0.3,0,0.3,0)
+main.BackgroundTransparency = 1
+
+-- nền
+local bg = Instance.new("ImageLabel",main)
+bg.Size = UDim2.new(1,0,1,0)
+bg.Image = "rbxassetid://103671553148241"
+bg.BackgroundTransparency = 1
+
+-- kéo GUI
+local dragging = false
+local dragInput, mousePos, framePos
+
+main.InputBegan:Connect(function(input)
+if input.UserInputType == Enum.UserInputType.MouseButton1 then
+dragging = true
+mousePos = input.Position
+framePos = main.Position
+end
+end)
+
+main.InputEnded:Connect(function(input)
+if input.UserInputType == Enum.UserInputType.MouseButton1 then
+dragging = false
+end
+end)
+
+UIS.InputChanged:Connect(function(input)
+if dragging then
+local delta = input.Position - mousePos
+main.Position = UDim2.new(
+framePos.X.Scale,
+framePos.X.Offset + delta.X,
+framePos.Y.Scale,
+framePos.Y.Offset + delta.Y
+)
+end
+end)
+
+-- nút thu nhỏ
+local miniBtn = Instance.new("TextButton",main)
+miniBtn.Size = UDim2.new(0,30,0,30)
+miniBtn.Position = UDim2.new(1,-35,0,5)
+miniBtn.Text = "-"
+
+-- nút tròn mở lại
+local openBtn = Instance.new("ImageButton",gui)
+openBtn.Size = UDim2.new(0,60,0,60)
+openBtn.Position = UDim2.new(0.02,0,0.5,0)
+openBtn.Image = "rbxassetid://103671553148241"
+openBtn.Visible = false
+
+miniBtn.MouseButton1Click:Connect(function()
+main.Visible = false
+openBtn.Visible = true
+end)
+
+openBtn.MouseButton1Click:Connect(function()
+main.Visible = true
+openBtn.Visible = false
+end)
+
+-- spam skill
+spawn(function()
+while true do
+vim:SendKeyEvent(true,"Z",false,game)
+wait(skillDelay)
+vim:SendKeyEvent(true,"X",false,game)
+wait(skillDelay)
+vim:SendKeyEvent(true,"C",false,game)
+wait(skillDelay)
+vim:SendKeyEvent(true,"V",false,game)
+wait(skillDelay)
+end
+end)
+
+-- auto click
+spawn(function()
+while true do
+vim:SendMouseButtonEvent(0,0,0,true,game,0)
+wait()
+vim:SendMouseButtonEvent(0,0,0,false,game,0)
+wait(clickDelay)
+end
+end)
+
+-- chỉnh tốc độ spam chiêu
+local skillBox = Instance.new("TextBox",main)
+skillBox.Size = UDim2.new(0,120,0,30)
+skillBox.Position = UDim2.new(0.05,0,0.65,0)
+skillBox.PlaceholderText = "⚡ Speed Skill"
+
+skillBox.FocusLost:Connect(function()
+skillDelay = tonumber(skillBox.Text) or skillDelay
+end)
+
+-- chỉnh tốc độ click
+local clickBox = Instance.new("TextBox",main)
+clickBox.Size = UDim2.new(0,120,0,30)
+clickBox.Position = UDim2.new(0.55,0,0.65,0)
+clickBox.PlaceholderText = "🖱 Speed Click"
+
+clickBox.FocusLost:Connect(function()
+clickDelay = tonumber(clickBox.Text) or clickDelay
+end)
+
+-- teleport đảo 5
+local tp5 = Instance.new("TextButton",main)
+tp5.Size = UDim2.new(0,120,0,30)
+tp5.Position = UDim2.new(0.05,0,0.45,0)
+tp5.Text = "TP Đảo 5"
+
+tp5.MouseButton1Click:Connect(function()
+player.Character.HumanoidRootPart.CFrame = CFrame.new(-399.96,24.02,1058.49)
+end)
+
+-- teleport bán
+local tpSell = Instance.new("TextButton",main)
+tpSell.Size = UDim2.new(0,120,0,30)
+tpSell.Position = UDim2.new(0.55,0,0.45,0)
+tpSell.Text = "TP Bán"
+
+tpSell.MouseButton1Click:Connect(function()
+player.Character.HumanoidRootPart.CFrame = CFrame.new(-535.47,27.86,1161.16)
+end)
