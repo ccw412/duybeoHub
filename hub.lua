@@ -1,204 +1,234 @@
--- vỹ bel / Con Chó Đại Ngu HUB
+-- 🐶 DUY BEO HUB V4 PRO
 
 local player = game.Players.LocalPlayer
 local vim = game:GetService("VirtualInputManager")
+local TweenService = game:GetService("TweenService")
+local UIS = game:GetService("UserInputService")
 
--- tốc độ
 local skillSpeed = 0.4
 local clickSpeed = 1
+local spam = false
+local autoclick = false
+local autoFarm = false
+
+-- 📱 MOBILE DETECT
+local isMobile = UIS.TouchEnabled and not UIS.KeyboardEnabled
 
 -- GUI
-local gui = Instance.new("ScreenGui", game.CoreGui)
-gui.Name = "VyBelHub"
+local gui = Instance.new("ScreenGui",game.CoreGui)
 
-local main = Instance.new("Frame", gui)
-main.Size = UDim2.new(0,340,0,380)
-main.Position = UDim2.new(0.35,0,0.3,0)
-main.BackgroundColor3 = Color3.fromRGB(25,25,25)
+local main = Instance.new("Frame",gui)
+
+if isMobile then
+	main.Size = UDim2.new(0.85,0,0.6,0)
+	main.Position = UDim2.new(0.075,0,0.2,0)
+else
+	main.Size = UDim2.new(0,380,0,340)
+	main.Position = UDim2.new(0.35,0,0.3,0)
+end
+
+main.BackgroundColor3 = Color3.fromRGB(30,30,30)
 main.Active = true
 main.Draggable = true
-Instance.new("UICorner", main)
+Instance.new("UICorner",main)
 
--- nền meme con mèo
-local bg = Instance.new("ImageLabel", main)
-bg.Size = UDim2.new(1,0,1,0)
-bg.Position = UDim2.new(0,0,0,0)
-bg.Image = "rbxassetid://103671553148241"
-bg.BackgroundTransparency = 1
-bg.ImageTransparency = 0.25
-bg.ScaleType = Enum.ScaleType.Stretch
+-- 🎨 GRADIENT
+local gradient = Instance.new("UIGradient",main)
+gradient.Color = ColorSequence.new{
+	ColorSequenceKeypoint.new(0,Color3.fromRGB(60,60,60)),
+	ColorSequenceKeypoint.new(1,Color3.fromRGB(20,20,20))
+}
 
--- tiêu đề
-local title = Instance.new("TextLabel", main)
-title.Size = UDim2.new(1,0,0,35)
-title.Text = "🐶 Con Chó Đại Ngu HUB | vỹ bel"
+-- TITLE
+local title = Instance.new("TextLabel",main)
+title.Size = UDim2.new(1,0,0,40)
+title.Text = "🐶 Duy Beo HUB V4"
 title.TextScaled = true
-title.BackgroundColor3 = Color3.fromRGB(40,40,40)
-Instance.new("UICorner", title)
+title.TextColor3 = Color3.fromRGB(255,255,255)
+title.BackgroundTransparency = 1
 
--- thu nhỏ
-local minimize = Instance.new("TextButton", main)
+-- 📲 MINIMIZE
+local minimize = Instance.new("TextButton",main)
 minimize.Size = UDim2.new(0,30,0,30)
-minimize.Position = UDim2.new(1,-35,0,3)
+minimize.Position = UDim2.new(1,-35,0,5)
 minimize.Text = "-"
+minimize.BackgroundColor3 = Color3.fromRGB(60,60,60)
+minimize.TextColor3 = Color3.fromRGB(255,255,255)
+Instance.new("UICorner",minimize)
 
-local open = Instance.new("TextButton", gui)
-open.Size = UDim2.new(0,60,0,60)
-open.Position = UDim2.new(0,40,0,200)
-open.Text = "HUB"
-open.Visible = false
-open.BackgroundColor3 = Color3.fromRGB(0,170,255)
-open.TextScaled = true
-open.Active = true
-open.Draggable = true
-Instance.new("UICorner", open).CornerRadius = UDim.new(1,0)
+local openHub = Instance.new("TextButton",gui)
+openHub.Size = UDim2.new(0,120,0,40)
+openHub.Position = UDim2.new(0,20,0.8,0)
+openHub.Text = "📲 Mở HUB"
+openHub.Visible = false
+openHub.BackgroundColor3 = Color3.fromRGB(40,40,40)
+openHub.TextColor3 = Color3.fromRGB(255,255,255)
+Instance.new("UICorner",openHub)
 
 minimize.MouseButton1Click:Connect(function()
 	main.Visible = false
-	open.Visible = true
+	openHub.Visible = true
 end)
 
-open.MouseButton1Click:Connect(function()
+openHub.MouseButton1Click:Connect(function()
+
 	main.Visible = true
-	open.Visible = false
+	openHub.Visible = false
+
+	main.Size = UDim2.new(0,0,0,0)
+
+	local tween = TweenService:Create(
+		main,
+		TweenInfo.new(0.35,Enum.EasingStyle.Back,Enum.EasingDirection.Out),
+		{
+			Size = isMobile and UDim2.new(0.85,0,0.6,0) or UDim2.new(0,380,0,340)
+		}
+	)
+
+	tween:Play()
+
 end)
 
--- Spam Skill
-local spam = false
+-- ⚔ TAB BUTTONS
+local combatTab = Instance.new("TextButton",main)
+combatTab.Size = UDim2.new(0.3,0,0,30)
+combatTab.Position = UDim2.new(0.02,0,0,45)
+combatTab.Text = "⚔ Combat"
+combatTab.BackgroundColor3 = Color3.fromRGB(45,45,45)
+combatTab.TextColor3 = Color3.fromRGB(255,255,255)
+Instance.new("UICorner",combatTab)
 
-local spamBtn = Instance.new("TextButton", main)
-spamBtn.Size = UDim2.new(0,150,0,35)
-spamBtn.Position = UDim2.new(0,15,0,50)
+local farmTab = combatTab:Clone()
+farmTab.Parent = main
+farmTab.Position = UDim2.new(0.35,0,0,45)
+farmTab.Text = "🌾 Farm"
+
+local tpTab = combatTab:Clone()
+tpTab.Parent = main
+tpTab.Position = UDim2.new(0.68,0,0,45)
+tpTab.Text = "🗺 Teleport"
+
+-- FRAMES
+local combatFrame = Instance.new("Frame",main)
+combatFrame.Size = UDim2.new(1,0,1,-90)
+combatFrame.Position = UDim2.new(0,0,0,80)
+combatFrame.BackgroundTransparency = 1
+
+local farmFrame = combatFrame:Clone()
+farmFrame.Parent = main
+farmFrame.Visible = false
+
+local tpFrame = combatFrame:Clone()
+tpFrame.Parent = main
+tpFrame.Visible = false
+
+-- ⚡ TAB ANIMATION
+local function switchTab(frame)
+
+	for _,f in pairs({combatFrame,farmFrame,tpFrame}) do
+		f.Visible = false
+	end
+
+	frame.Position = UDim2.new(0,0,0,120)
+	frame.Visible = true
+
+	TweenService:Create(
+		frame,
+		TweenInfo.new(0.25,Enum.EasingStyle.Quad),
+		{Position = UDim2.new(0,0,0,80)}
+	):Play()
+
+end
+
+combatTab.MouseButton1Click:Connect(function()
+	switchTab(combatFrame)
+end)
+
+farmTab.MouseButton1Click:Connect(function()
+	switchTab(farmFrame)
+end)
+
+tpTab.MouseButton1Click:Connect(function()
+	switchTab(tpFrame)
+end)
+
+-- ⚡ SPAM
+local spamBtn = Instance.new("TextButton",combatFrame)
+spamBtn.Size = UDim2.new(0,160,0,35)
+spamBtn.Position = UDim2.new(0,10,0,10)
 spamBtn.Text = "⚡ Spam Skill OFF"
-Instance.new("UICorner", spamBtn)
+Instance.new("UICorner",spamBtn)
 
 spamBtn.MouseButton1Click:Connect(function()
-	spam = not spam
-	spamBtn.Text = spam and "⚡ Spam Skill ON" or "⚡ Spam Skill OFF"
+spam = not spam
+spamBtn.Text = spam and "⚡ Spam Skill ON" or "⚡ Spam Skill OFF"
 end)
 
-spawn(function()
-	while true do
-		if spam then
-			for _,k in pairs({"Z","X","C","V"}) do
-				vim:SendKeyEvent(true,k,false,game)
-				wait(0.1)
-				vim:SendKeyEvent(false,k,false,game)
-				wait(skillSpeed)
-			end
-		end
-		wait(0.1)
-	end
-end)
-
--- ⚡ chỉnh tốc độ skill
-local skillUp = Instance.new("TextButton", main)
-skillUp.Size = UDim2.new(0,70,0,30)
-skillUp.Position = UDim2.new(0,15,0,90)
-skillUp.Text = "Skill +"
-Instance.new("UICorner", skillUp)
-
-skillUp.MouseButton1Click:Connect(function()
-	skillSpeed = math.max(0.05, skillSpeed - 0.05)
-end)
-
-local skillDown = Instance.new("TextButton", main)
-skillDown.Size = UDim2.new(0,70,0,30)
-skillDown.Position = UDim2.new(0,95,0,90)
-skillDown.Text = "Skill -"
-Instance.new("UICorner", skillDown)
-
-skillDown.MouseButton1Click:Connect(function()
-	skillSpeed = skillSpeed + 0.05
-end)
-
--- Auto Click
-local autoclick = false
-
-local clickBtn = Instance.new("TextButton", main)
-clickBtn.Size = UDim2.new(0,150,0,35)
-clickBtn.Position = UDim2.new(0,15,0,130)
+-- 🖱 AUTO CLICK
+local clickBtn = Instance.new("TextButton",combatFrame)
+clickBtn.Size = UDim2.new(0,160,0,35)
+clickBtn.Position = UDim2.new(0,10,0,55)
 clickBtn.Text = "🖱 Auto Click OFF"
-Instance.new("UICorner", clickBtn)
+Instance.new("UICorner",clickBtn)
 
 clickBtn.MouseButton1Click:Connect(function()
-	autoclick = not autoclick
-	clickBtn.Text = autoclick and "🖱 Auto Click ON" or "🖱 Auto Click OFF"
+autoclick = not autoclick
+clickBtn.Text = autoclick and "🖱 Auto Click ON" or "🖱 Auto Click OFF"
+end)
+
+-- 🐶 AUTO FARM MIXI
+local farmBtn = Instance.new("TextButton",farmFrame)
+farmBtn.Size = UDim2.new(0,200,0,40)
+farmBtn.Position = UDim2.new(0,10,0,10)
+farmBtn.Text = "🐶 Auto Farm Độ Mixi OFF"
+farmBtn.TextColor3 = Color3.new(1,1,1)
+farmBtn.BackgroundColor3 = Color3.fromRGB(45,45,45)
+Instance.new("UICorner",farmBtn)
+
+farmBtn.MouseButton1Click:Connect(function()
+autoFarm = not autoFarm
+farmBtn.Text = autoFarm and "🐶 Auto Farm Độ Mixi ON" or "🐶 Auto Farm Độ Mixi OFF"
 end)
 
 spawn(function()
-	while true do
-		if autoclick then
-			vim:SendMouseButtonEvent(0,0,0,true,game,0)
-			vim:SendMouseButtonEvent(0,0,0,false,game,0)
-		end
-		wait(clickSpeed)
-	end
-end)
+while true do
+if autoFarm then
 
--- 🖱 chỉnh tốc độ click
-local clickUp = Instance.new("TextButton", main)
-clickUp.Size = UDim2.new(0,70,0,30)
-clickUp.Position = UDim2.new(0,15,0,170)
-clickUp.Text = "Click +"
-Instance.new("UICorner", clickUp)
-
-clickUp.MouseButton1Click:Connect(function()
-	clickSpeed = math.max(0.05, clickSpeed - 0.05)
-end)
-
-local clickDown = Instance.new("TextButton", main)
-clickDown.Size = UDim2.new(0,70,0,30)
-clickDown.Position = UDim2.new(0,95,0,170)
-clickDown.Text = "Click -"
-Instance.new("UICorner", clickDown)
-
-clickDown.MouseButton1Click:Connect(function()
-	clickSpeed = clickSpeed + 0.05
-end)
-
--- ⚡ Instant bật sẵn
-local instant = true
-
-local function applyInstant()
-	for _,v in pairs(game:GetDescendants()) do
-		if v:IsA("ProximityPrompt") then
-			v.HoldDuration = 0
-		end
-	end
+for _,k in pairs({"Z","X","C","V"}) do
+vim:SendKeyEvent(true,k,false,game)
+task.wait(0.05)
+vim:SendKeyEvent(false,k,false,game)
 end
 
-applyInstant()
+for i=1,5 do
+vim:SendMouseButtonEvent(0,0,0,true,game,0)
+vim:SendMouseButtonEvent(0,0,0,false,game,0)
+task.wait(0.1)
+end
 
-game.DescendantAdded:Connect(function(v)
-	if instant and v:IsA("ProximityPrompt") then
-		v.HoldDuration = 0
-	end
+end
+task.wait(0.3)
+end
 end)
 
--- teleport
-local function teleport(x,y,z)
-	local char = player.Character
-	if char and char:FindFirstChild("HumanoidRootPart") then
-		char.HumanoidRootPart.CFrame = CFrame.new(x,y,z)
-	end
+-- 🗺 TELEPORT
+local function tp(name,x,y,z,pos)
+
+local b=Instance.new("TextButton",tpFrame)
+b.Size=UDim2.new(0,160,0,35)
+b.Position=UDim2.new(0,10,0,pos)
+b.Text=name
+Instance.new("UICorner",b)
+
+b.MouseButton1Click:Connect(function()
+player.Character.HumanoidRootPart.CFrame=CFrame.new(x,y,z)
+end)
+
 end
 
-local function tpButton(name,x,y,z,posY)
-	local b = Instance.new("TextButton", main)
-	b.Size = UDim2.new(0,140,0,35)
-	b.Position = UDim2.new(1,-155,0,posY)
-	b.Text = name
-	Instance.new("UICorner", b)
-
-	b.MouseButton1Click:Connect(function()
-		teleport(x,y,z)
-	end)
-end
-
-tpButton("🏝 Đảo 1",178.05,22.71,59.37,50)
-tpButton("🏝 Đảo 2",1736.64,24.57,-388.55,95)
-tpButton("🏝 Đảo 3",1080.65,26.76,1356.08,140)
-tpButton("🏝 Đảo 4",572.53,33.05,-945.76,185)
-tpButton("🏝 Đảo 5",-399.96,24.02,1058.49,230)
-tpButton("🛒 Chỗ Bán",-535.47,27.86,1161.16,275)
+tp("🏝 Đảo 1",178,22,59,10)
+tp("🏝 Đảo 2",1736,24,-388,55)
+tp("🏝 Đảo 3",1080,26,1356,100)
+tp("🏝 Đảo 4",572,33,-945,145)
+tp("🏝 Đảo 5",-399,24,1058,190)
+tp("🛒 Bán",-535,27,1161,235)
